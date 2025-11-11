@@ -44,19 +44,11 @@ export const createQuotation: Endpoint = {
       for (const item of cartData.items) {
         if (item.product && typeof item.product === 'object') {
           const product = item.product as Product
-          
-          // --- THIS IS THE FIX ---
-          // Divide by 100 to convert from cents to dollars
-          let price = (product.priceInMVR || 0) / 100
-          // --- END FIX ---
-          
+          let price = product.priceInMVR || 0
           let variantId: number | null = null
 
           if (item.variant && typeof item.variant === 'object') {
-            // --- THIS IS THE FIX ---
-            // Also divide variant price by 100
-            price = (item.variant.priceInMVR || 0) / 100
-            // --- END FIX ---
+            price = item.variant.priceInMVR || price
             variantId = item.variant.id
           } else if (typeof item.variant === 'number') {
             variantId = item.variant
@@ -67,7 +59,7 @@ export const createQuotation: Endpoint = {
               product: product.id,
               variant: variantId,
               quantity: item.quantity,
-              price, // This is now in dollars
+              price: price / 100, // Convert from cents
             })
           }
         }
@@ -86,22 +78,13 @@ export const createQuotation: Endpoint = {
         data: {
           user: user.id,
           items: quotationItems,
-          
-          // --- THIS IS THE FIX ---
-          // Also divide the total by 100
-          total: (cartData.subtotal || 0) / 100,
-          // --- END FIX ---
-          
+          total: (cartData.subtotal || 0) / 100, // Convert from cents
           status: 'draft',
         },
       })
 
       // 4. Clear user's cart
-      await req.payload.update({
-        collection: 'carts',
-        id: cartData.id,
-        data: { items: [] },
-      })
+      // (We removed this, the frontend 'clearCart()' handles it)
 
       return Response.json(
         {

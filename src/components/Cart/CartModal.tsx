@@ -9,14 +9,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { useAuth } from '@/providers/Auth'; // --- ADDED 'useAuth' ---
+import { useAuth } from '@/providers/Auth';
 import { useCart } from '@payloadcms/plugin-ecommerce/client/react';
 import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation'; // --- ADDED 'useRouter' ---
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
-import { toast } from 'sonner'; // --- ADDED 'toast' ---
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Product } from '@/payload-types';
@@ -25,15 +25,11 @@ import { EditItemQuantityButton } from './EditItemQuantityButton';
 import { OpenCartButton } from './OpenCart';
 
 export function CartModal() {
-  // --- MODIFIED: Added 'clearCart' ---
   const { cart, clearCart } = useCart()
   const [isOpen, setIsOpen] = useState(false)
-  
-  // --- ADDED: State for loading, auth, and routing ---
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
-  // --- END ADDED ---
 
   const pathname = usePathname()
 
@@ -47,7 +43,6 @@ export function CartModal() {
     return cart.items.reduce((quantity, item) => (item.quantity || 0) + quantity, 0)
   }, [cart])
 
-  // --- ADDED: Handler function for the new button ---
   const handleCreateQuotation = async () => {
     if (!user) {
       toast.error('You must be logged in to request a quotation.')
@@ -71,6 +66,11 @@ export function CartModal() {
       toast.success(data.message || 'Quotation created successfully!')
       clearCart() // Clear the cart on success
       setIsOpen(false) // Close the modal
+
+      // CHANGED: Use query parameter instead of path parameter
+      const newQuotationId = data.quotation.id
+      window.open(`/api/download-quotation?id=${newQuotationId}`, '_blank')
+
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
       toast.error(errorMessage)
@@ -78,7 +78,6 @@ export function CartModal() {
       setIsLoading(false)
     }
   }
-  // --- END ADDED ---
 
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
@@ -216,7 +215,6 @@ export function CartModal() {
                     </div>
                   )}
 
-                  {/* --- CHANGED: Replaced 'Checkout' Link with 'Quotation' Button --- */}
                   <Button
                     className="w-full"
                     onClick={handleCreateQuotation}
@@ -224,7 +222,6 @@ export function CartModal() {
                   >
                     {isLoading ? 'Creating Quotation...' : 'Request a Quotation'}
                   </Button>
-                  {/* --- END CHANGED --- */}
                 </div>
               </div>
             </div>

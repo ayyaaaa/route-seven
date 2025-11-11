@@ -55,7 +55,7 @@ export const ProductGridItem: React.FC<Props> = ({ product }) => {
           <div className="">
             {/* --- THIS IS THE FIX --- */}
             {/* Divide by 100 to convert from Laari to MVR */}
-            <Price amount={price / 100} />
+            <Price amount={price} />
             {/* --- END FIX --- */}
           </div>
         )}

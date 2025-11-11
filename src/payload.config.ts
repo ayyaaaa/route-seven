@@ -27,6 +27,7 @@ import { plugins } from './plugins'
 // --- We added these in previous steps ---
 import { quotationsPlugin } from '@/plugins/quotationsPlugin'
 import { createQuotation } from './endpoints/createQuotation'
+import { downloadQuotation } from './endpoints/downloadQuotation'
 // ---
 
 const filename = fileURLToPath(import.meta.url)
@@ -89,7 +90,7 @@ export default buildConfig({
   //email: nodemailerAdapter(),
 
   // --- This is from our previous step ---
-  endpoints: [createQuotation],
+  endpoints: [createQuotation, downloadQuotation],
 
   globals: [Header, Footer],
 

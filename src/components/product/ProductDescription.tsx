@@ -59,9 +59,9 @@ export function ProductDescription({ product }: { product: Product }) {
           {/* --- THIS IS THE FIX --- */}
           {/* Divide all amounts by 100 */}
           {hasVariants ? (
-            <Price highestAmount={highestAmount / 100} lowestAmount={lowestAmount / 100} />
+            <Price highestAmount={highestAmount} lowestAmount={lowestAmount} />
           ) : (
-            <Price amount={amount / 100} />
+            <Price amount={amount} />
           )}
           {/* --- END FIX --- */}
         </div>
