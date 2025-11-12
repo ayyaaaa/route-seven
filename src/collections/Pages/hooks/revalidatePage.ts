@@ -6,7 +6,7 @@ import type { Page } from '../../../payload-types'
 
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
-  previoMVRoc,
+  previousDoc,
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
@@ -20,8 +20,8 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
     }
 
     // If the page was previously published, we need to revalidate the old path
-    if (previoMVRoc?._status === 'published' && doc._status !== 'published') {
-      const oldPath = previoMVRoc.slug === 'home' ? '/' : `/${previoMVRoc.slug}`
+    if (previousDoc?._status === 'published' && doc._status !== 'published') {
+      const oldPath = previousDoc.slug === 'home' ? '/' : `/${previousDoc.slug}`
 
       payload.logger.info(`Revalidating old page at path: ${oldPath}`)
 
